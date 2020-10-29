@@ -463,6 +463,30 @@ int main()
 			}
 
 			// Handle squashing the player
+			if (branchPositions[5] == playerSide)
+			{
+				// death
+				paused = true;
+				acceptInput = false;
+
+				// Draw the gravestone
+				graveSprite.setPosition(525, 760);
+
+				// Hide the player
+				playerSprite.setPosition(2000, 660);
+
+				// Change the message
+				messageText.setString("SQUISHED!");
+
+				// center on the screen
+				sf::FloatRect textRect{ messageText.getLocalBounds() };
+
+				messageText.setOrigin(textRect.left +
+					textRect.width / 2.0f,
+					textRect.top + textRect.height / 2.0f);
+
+				messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+			}
 		}
 
 		// clear everything from the last frame
