@@ -141,6 +141,45 @@ int main()
 		branches[i].setOrigin(220, 20);
 	}
 
+	// Preparing the player sprite
+	sf::Texture playerTexture;
+	playerTexture.loadFromFile("graphics/player.png");
+	sf::Sprite playerSprite;
+	playerSprite.setTexture(playerTexture);
+	playerSprite.setPosition(580, 720);
+
+	// the player will start on the left side
+	side playerSide{ side::LEFT };
+
+	// Preparing the gravestone
+	sf::Texture graveTexture;
+	graveTexture.loadFromFile("graphics/rip.png");
+	sf::Sprite graveSprite;
+	graveSprite.setTexture(graveTexture);
+	graveSprite.setPosition(600, 860);
+
+	// Preparing the axe
+	sf::Texture axeTexture;
+	axeTexture.loadFromFile("graphics/axe.png");
+	sf::Sprite axeSprite;
+	axeSprite.setTexture(axeTexture);
+	axeSprite.setPosition(700, 830);
+
+	// Line the axe up with the tree
+	const float AXE_POSITION_LEFT{ 700 };
+	const float AXE_POSITION_RIGHT{ 1075 };
+
+	// Preparing the flying log
+	sf::Texture logTexture;
+	logTexture.loadFromFile("graphics/log.png");
+	sf::Sprite logSprite;
+	logSprite.setTexture(logTexture);
+	logSprite.setPosition(810, 720);
+
+	bool logActive{ false };
+	float logSpeedX{ 1000 };
+	float logSpeedY{ -1500 };
+
 	while (window.isOpen())
 	{
 		// handle the players input
@@ -362,4 +401,30 @@ int main()
 	}
 
 	return 0;
+}
+
+void updateBranches(int seed)
+{
+	// Move all branches down one place
+	for (int i{ NUM_BRANCHES - 1 }; i > 0; i--)
+	{
+		branchPositions[i] = branchPositions[i - 1];
+	}
+
+	// Spawn a new branch at position 0
+	std::srand((int)time(0) + seed);
+	int r{ rand() % 5 };
+
+	switch (r)
+	{
+	case 0:
+		branchPositions[0] = side::LEFT;
+		break;
+	case 1:
+		branchPositions[0] = side::RIGHT;
+		break;
+	default:
+		branchPositions[0] = side::NONE;
+		break;
+	}
 }
