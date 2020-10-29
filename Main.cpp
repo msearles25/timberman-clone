@@ -1,4 +1,5 @@
 #include <stdlib.h> // srand & rand
+#include <sstream>
 #include <time.h> // time
 #include <SFML/Graphics.hpp>
 
@@ -68,6 +69,57 @@ int main()
 
 	sf::Clock clock;
 
+	// Time bar
+	sf::RectangleShape timeBar;
+	float timeBarStartWidth{ 400.0f };
+	float timeBarHeight{ 80.0f };
+	timeBar.setSize(sf::Vector2f(timeBarStartWidth, timeBarHeight));
+	timeBar.setFillColor(sf::Color::Red);
+	timeBar.setPosition((1920 / 2) - timeBarStartWidth / 2, 980);
+
+	sf::Time gameTimeTotal;
+	float timeRemaining{ 6.0f };
+	float timeBarWidthPerSecond{ timeBarStartWidth / timeRemaining };
+
+	bool paused{ true };
+
+	// Draw some text
+	int score{ 0 };
+
+	sf::Text messageText;
+	sf::Text scoreText;
+
+	// Choosing a font
+	sf::Font font;
+	font.loadFromFile("fonts/KOMIKAP_.ttf");
+
+	// Set the font of our message
+	messageText.setFont(font);
+	scoreText.setFont(font);
+
+	// Assign the actual messages
+	messageText.setString("Press Enter to start!");
+	scoreText.setString("Score: 0");
+	
+	// Make the text big
+	messageText.setCharacterSize(75);
+	scoreText.setCharacterSize(100);
+
+	// Set the color of the text
+	messageText.setFillColor(sf::Color::White);
+	scoreText.setFillColor(sf::Color::White);
+
+	// Position the text on screen
+	sf::FloatRect textRect{ messageText.getLocalBounds() };
+
+	messageText.setOrigin(textRect.left +
+		textRect.width / 2.0f,
+		textRect.top +
+		textRect.height / 2.0f);
+	messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+	scoreText.setPosition(20, 20);
+
 	while (window.isOpen())
 	{
 		// handle the players input
@@ -75,113 +127,128 @@ int main()
 		{
 			window.close();
 		}
-		// update the scene
 
-		sf::Time dt{ clock.restart() };
-
-		// Manage the bee
-		if (!beeActive)
+		// Start the game
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
 		{
-			// How fast the bee will be
-			std::srand((int)time(0)); // seeding the random number generator with current time
-			beeSpeed = (std::rand() % 200) + 200.0f;
+			paused = false;
+		}
 
-			// How high the bee is
-			std::srand((int)time(0) * 10);
-			float height{ (std::rand() % 500) + 500.0f };
-			beeSprite.setPosition(2000, height);
+		if (!paused)
+		{
+			// update the scene
+
+			sf::Time dt{ clock.restart() };
+
+			// Manage the bee
+			if (!beeActive)
+			{
+				// How fast the bee will be
+				std::srand((int)time(0)); // seeding the random number generator with current time
+				beeSpeed = (std::rand() % 200) + 200.0f;
+
+				// How high the bee is
+				std::srand((int)time(0) * 10);
+				float height{ (std::rand() % 500) + 500.0f };
+				beeSprite.setPosition(2000, height);
 			
-			beeActive = true;
-		}
-		else // move the bee
-		{
-			beeSprite.setPosition(beeSprite.getPosition().x - 
-				(beeSpeed * dt.asSeconds()), 
-				beeSprite.getPosition().y);
-
-			// has the bee reached the left-hand edge of the screen?
-			if (beeSprite.getPosition().x < -100)
-			{
-				// Set it up as a new bee next frame
-				beeActive = false;
+				beeActive = true;
 			}
-		}
-
-		// Manage the clouds
-		// cloud 1
-		if (!cloud1Active)
-		{
-			// How fast is the cloud moving
-			std::srand((int)time(0) * 10);
-			cloud1Speed = (float)(std::rand() % 200);
-
-			// How high is the cloud
-			std::srand((int)time(0) * 10);
-			float height{ (float)(std::rand() % 150) };
-			cloudSprite1.setPosition(-200, height);
-			cloud1Active = true;
-		}
-		else
-		{
-			cloudSprite1.setPosition(
-				cloudSprite1.getPosition().x +
-				(cloud1Speed * dt.asSeconds()),
-				cloudSprite1.getPosition().y);
-
-			// has the cloud reached the edge of the screen
-			if (cloudSprite1.getPosition().x > 1920)
+			else // move the bee
 			{
-				// set it up ass a new cloud
-				cloud1Active = false;
+				beeSprite.setPosition(beeSprite.getPosition().x - 
+					(beeSpeed * dt.asSeconds()), 
+					beeSprite.getPosition().y);
+
+				// has the bee reached the left-hand edge of the screen?
+				if (beeSprite.getPosition().x < -100)
+				{
+					// Set it up as a new bee next frame
+					beeActive = false;
+				}
 			}
-		}
 
-		// cloud 2
-		if (!cloud2Active)
-		{
-			std::srand((int)time(0) * 20);
-			cloud2Speed = (float)(std::rand() % 200);
-
-			std::srand((int)time(0) * 20);
-			float height{ (std::rand() % 300) - 150.0f };
-			cloudSprite2.setPosition(-200, height);
-			cloud2Active = true;
-		}
-		else
-		{
-			cloudSprite2.setPosition(
-				cloudSprite2.getPosition().x +
-				(cloud2Speed * dt.asSeconds()),
-				cloudSprite2.getPosition().y);
-
-			if (cloudSprite2.getPosition().x > 1920)
+			// Manage the clouds
+			// cloud 1
+			if (!cloud1Active)
 			{
-				cloud2Active = false;
+				// How fast is the cloud moving
+				std::srand((int)time(0) * 10);
+				cloud1Speed = (float)(std::rand() % 200);
+
+				// How high is the cloud
+				std::srand((int)time(0) * 10);
+				float height{ (float)(std::rand() % 150) };
+				cloudSprite1.setPosition(-200, height);
+				cloud1Active = true;
 			}
-		}
-
-		// cloud 3
-		if (!cloud3Active)
-		{
-			std::srand((int)time(0) * 30);
-			cloud3Speed = (float)(std::rand() % 200);
-
-			std::srand((int)time(0) * 30);
-			float height{ (std::rand() % 450) - 150.0f };
-			cloudSprite3.setPosition(-200, height);
-			cloud3Active = true;
-		}
-		else
-		{
-			cloudSprite3.setPosition(
-				cloudSprite3.getPosition().x +
-				(cloud3Speed * dt.asSeconds()),
-				cloudSprite3.getPosition().y);
-
-			if (cloudSprite3.getPosition().x > 1920)
+			else
 			{
-				cloud3Active = false;
+				cloudSprite1.setPosition(
+					cloudSprite1.getPosition().x +
+					(cloud1Speed * dt.asSeconds()),
+					cloudSprite1.getPosition().y);
+
+				// has the cloud reached the edge of the screen
+				if (cloudSprite1.getPosition().x > 1920)
+				{
+					// set it up ass a new cloud
+					cloud1Active = false;
+				}
 			}
+
+			// cloud 2
+			if (!cloud2Active)
+			{
+				std::srand((int)time(0) * 20);
+				cloud2Speed = (float)(std::rand() % 200);
+
+				std::srand((int)time(0) * 20);
+				float height{ (std::rand() % 300) - 150.0f };
+				cloudSprite2.setPosition(-200, height);
+				cloud2Active = true;
+			}
+			else
+			{
+				cloudSprite2.setPosition(
+					cloudSprite2.getPosition().x +
+					(cloud2Speed * dt.asSeconds()),
+					cloudSprite2.getPosition().y);
+
+				if (cloudSprite2.getPosition().x > 1920)
+				{
+					cloud2Active = false;
+				}
+			}
+
+			// cloud 3
+			if (!cloud3Active)
+			{
+				std::srand((int)time(0) * 30);
+				cloud3Speed = (float)(std::rand() % 200);
+
+				std::srand((int)time(0) * 30);
+				float height{ (std::rand() % 450) - 150.0f };
+				cloudSprite3.setPosition(-200, height);
+				cloud3Active = true;
+			}
+			else
+			{
+				cloudSprite3.setPosition(
+					cloudSprite3.getPosition().x +
+					(cloud3Speed * dt.asSeconds()),
+					cloudSprite3.getPosition().y);
+
+				if (cloudSprite3.getPosition().x > 1920)
+				{
+					cloud3Active = false;
+				}
+			}
+
+			// update the score 
+			std::stringstream ss;
+			ss << "Score: " << score;
+			scoreText.setString(ss.str());
 		}
 
 		// clear everything from the last frame
@@ -200,6 +267,15 @@ int main()
 
 		// Draw the bee
 		window.draw(beeSprite);
+
+		// Draw the score
+		window.draw(scoreText);
+
+		if (paused)
+		{
+			// Draw our start message
+			window.draw(messageText);
+		}
 
 		// Show everything we just drew
 		window.display();
