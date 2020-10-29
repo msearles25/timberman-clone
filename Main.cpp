@@ -132,6 +132,10 @@ int main()
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
 		{
 			paused = false;
+
+			// Reset the time and the score
+			score = 0;
+			timeRemaining = 6;
 		}
 
 		if (!paused)
@@ -139,6 +143,29 @@ int main()
 			// update the scene
 
 			sf::Time dt{ clock.restart() };
+
+			// Subtract from the amount of time remaining
+			timeRemaining -= dt.asSeconds();
+			// set the size of the bar
+			timeBar.setSize(sf::Vector2f(timeBarWidthPerSecond * timeRemaining, timeBarHeight));
+
+			if (timeRemaining <= 0.0f)
+			{
+				// Pause the game
+				paused = true;
+
+				// Change the message shown 
+				messageText.setString("Out of time!");
+
+				// Reposition the text based on new size
+				sf::FloatRect textRect{ messageText.getLocalBounds() };
+				messageText.setOrigin(textRect.left +
+					textRect.width / 2.0f,
+					textRect.top +
+					textRect.height / 2.0f);
+
+				messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+			}
 
 			// Manage the bee
 			if (!beeActive)
@@ -270,6 +297,8 @@ int main()
 
 		// Draw the score
 		window.draw(scoreText);
+
+		window.draw(timeBar);
 
 		if (paused)
 		{
