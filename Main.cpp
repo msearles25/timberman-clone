@@ -3,6 +3,14 @@
 #include <time.h> // time
 #include <SFML/Graphics.hpp>
 
+void updateBranches(int seed);
+
+const int NUM_BRANCHES{ 6 };
+sf::Sprite branches[NUM_BRANCHES];
+
+enum class side { LEFT, RIGHT, NONE };
+side branchPositions[NUM_BRANCHES];
+
 int main()
 {
 	// Create a video mode object
@@ -119,6 +127,19 @@ int main()
 	messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
 
 	scoreText.setPosition(20, 20);
+
+	sf::Texture branchTexture;
+	branchTexture.loadFromFile("graphics/branch.png");
+
+	// set the texture for each branch sprite
+	for (int i{ 0 }; i < NUM_BRANCHES; i++)
+	{
+		branches[i].setTexture(branchTexture);
+		branches[i].setPosition(-2000, -2000);
+
+		// set the branches to center
+		branches[i].setOrigin(220, 20);
+	}
 
 	while (window.isOpen())
 	{
@@ -276,6 +297,31 @@ int main()
 			std::stringstream ss;
 			ss << "Score: " << score;
 			scoreText.setString(ss.str());
+
+			// update the branch sprites
+			for (int i{ 0 }; i < NUM_BRANCHES; i++)
+			{
+				float height{ i * 150 };
+
+				if (branchPositions[i] == side::LEFT)
+				{
+					// Move the sprites to the left side
+					branches[i].setPosition(610, height);
+					
+					// Flip the sprite around the other way
+					branches[i].setRotation(180);
+				}
+				else if (branchPositions[i] == side::RIGHT)
+				{
+					branches[i].setPosition(1330, height);
+					branches[i].setRotation(0);
+				}
+				else
+				{
+					// Hide the branch
+					branches[i].setPosition(3000, height);
+				}
+			}
 		}
 
 		// clear everything from the last frame
@@ -288,6 +334,11 @@ int main()
 		window.draw(cloudSprite1);
 		window.draw(cloudSprite2);
 		window.draw(cloudSprite3);
+
+		for (int i{ 0 }; i < NUM_BRANCHES; i++)
+		{
+			window.draw(branches[i]);
+		}
 
 		// Draw the tree
 		window.draw(treeSprite);
