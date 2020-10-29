@@ -40,7 +40,27 @@ int main()
 	// Cloud Sprites
 	sf::Texture cloudTexture;
 	cloudTexture.loadFromFile("graphics/cloud.png");
+	sf::Sprite cloudSprite1;
+	sf::Sprite cloudSprite2;
+	sf::Sprite cloudSprite3;
+	cloudSprite1.setTexture(cloudTexture);
+	cloudSprite2.setTexture(cloudTexture);
+	cloudSprite3.setTexture(cloudTexture);
 
+	// Position the clouds on the left of the screen at different heights
+	cloudSprite1.setPosition(0, 0);
+	cloudSprite2.setPosition(0, 250);
+	cloudSprite3.setPosition(0, 500);
+
+	// Are the clouds currently on the screen?
+	bool cloud1Active{ false };
+	bool cloud2Active{ false };
+	bool cloud3Active{ false };
+
+	// Cloud speed
+	float cloud1Speed{ 0.0f };
+	float cloud2Speed{ 0.0f };
+	float cloud3Speed{ 0.0f };
 
 	while (window.isOpen())
 	{
@@ -56,6 +76,17 @@ int main()
 		
 		// Draw the game scene
 		window.draw(backgroundSprite);
+		
+		// Draw the clouds
+		window.draw(cloudSprite1);
+		window.draw(cloudSprite2);
+		window.draw(cloudSprite3);
+
+		// Draw the tree
+		window.draw(treeSprite);
+
+		// Draw the bee
+		window.draw(beeSprite);
 
 		// Show everything we just drew
 		window.display();
