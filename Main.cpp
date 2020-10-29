@@ -180,8 +180,24 @@ int main()
 	float logSpeedX{ 1000 };
 	float logSpeedY{ -1500 };
 
+	// Control the player input
+	bool acceptInput{ false };
+
 	while (window.isOpen())
 	{
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::KeyReleased && !paused)
+			{
+				// listen for the key press again
+				acceptInput = true;
+
+				// hide the axe
+				axeSprite.setPosition(2000, axeSprite.getPosition().y);
+			}
+		}
+
 		// handle the players input
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 		{
@@ -196,6 +212,71 @@ int main()
 			// Reset the time and the score
 			score = 0;
 			timeRemaining = 6;
+
+			// Make all the branches disappear
+			// starting in the second position
+			for (int i{ 1 }; i < NUM_BRANCHES; i++)
+			{
+				branchPositions[i] = side::NONE;
+			}
+
+			// Make sure the gravestone is hidden
+			graveSprite.setPosition(675, 2000);
+
+			// Move the player into position
+			playerSprite.setPosition(580, 720);
+
+			acceptInput = true;
+		}
+
+		// Make sure we are accepting inputs from the player
+		if (acceptInput)
+		{
+			// Hanlde pressing the right cursor key
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			{
+				playerSide = side::RIGHT;
+				score++;
+
+				// Add to the time remaining
+				timeRemaining += (2 / score) + .15f;
+				
+				axeSprite.setPosition(AXE_POSITION_RIGHT, axeSprite.getPosition().y);
+
+				playerSprite.setPosition(1200, 720);
+
+				// update the branches
+				updateBranches(score);
+
+				// Set the log flying to the left
+				logSprite.setPosition(810, 720);
+				logSpeedX = -5000;
+				logActive = true;
+
+				acceptInput = false;
+			}
+
+			// Handle pressing the left key
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			{
+				// make sure the player is on the left
+				playerSide = side::LEFT;
+				score++;
+
+				timeRemaining += (2 / score) + .15f;
+
+				axeSprite.setPosition(AXE_POSITION_LEFT, axeSprite.getPosition().y);
+
+				playerSprite.setPosition(580, 720);
+
+				updateBranches(score);
+
+				logSprite.setPosition(810, 720);
+				logSpeedX = 5000;
+				logActive = true;
+
+				acceptInput = false;
+			}
 		}
 
 		if (!paused)
@@ -361,6 +442,27 @@ int main()
 					branches[i].setPosition(3000, height);
 				}
 			}
+
+			// Handle the flying log
+			if (logActive)
+			{
+				logSprite.setPosition(logSprite.getPosition().x +
+					(logSpeedX * dt.asSeconds()),
+
+					logSprite.getPosition().y +
+					(logSpeedY * dt.asSeconds()));
+
+				// Has the log reached the edge?
+				if (logSprite.getPosition().x < -100 ||
+					logSprite.getPosition().x > 2000)
+				{
+					// set it up to be used for a new log
+					logActive = false;
+					logSprite.setPosition(810, 720);
+				}
+			}
+
+			// Handle squashing the player
 		}
 
 		// clear everything from the last frame
