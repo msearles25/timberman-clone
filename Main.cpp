@@ -7,7 +7,8 @@ int main()
 	// Create a video mode object
 	sf::VideoMode vm(1920, 1080);
 	// Create and open a window for the game
-	sf::RenderWindow window(vm, "Timber", sf::Style::Fullscreen);
+	//sf::RenderWindow window(vm, "Timber", sf::Style::Fullscreen);
+	sf::RenderWindow window(vm, "Timber");
 
 	// Create a texture to hold a graphic on the GPU's memory
 	sf::Texture backgroundTexture;
@@ -78,7 +79,7 @@ int main()
 
 		sf::Time dt{ clock.restart() };
 
-		// Setting up the bee
+		// Manage the bee
 		if (!beeActive)
 		{
 			// How fast the bee will be
@@ -103,6 +104,83 @@ int main()
 			{
 				// Set it up as a new bee next frame
 				beeActive = false;
+			}
+		}
+
+		// Manage the clouds
+		// cloud 1
+		if (!cloud1Active)
+		{
+			// How fast is the cloud moving
+			std::srand((int)time(0) * 10);
+			cloud1Speed = (float)(std::rand() % 200);
+
+			// How high is the cloud
+			std::srand((int)time(0) * 10);
+			float height{ (float)(std::rand() % 150) };
+			cloudSprite1.setPosition(-200, height);
+			cloud1Active = true;
+		}
+		else
+		{
+			cloudSprite1.setPosition(
+				cloudSprite1.getPosition().x +
+				(cloud1Speed * dt.asSeconds()),
+				cloudSprite1.getPosition().y);
+
+			// has the cloud reached the edge of the screen
+			if (cloudSprite1.getPosition().x > 1920)
+			{
+				// set it up ass a new cloud
+				cloud1Active = false;
+			}
+		}
+
+		// cloud 2
+		if (!cloud2Active)
+		{
+			std::srand((int)time(0) * 20);
+			cloud2Speed = (float)(std::rand() % 200);
+
+			std::srand((int)time(0) * 20);
+			float height{ (std::rand() % 300) - 150.0f };
+			cloudSprite2.setPosition(-200, height);
+			cloud2Active = true;
+		}
+		else
+		{
+			cloudSprite2.setPosition(
+				cloudSprite2.getPosition().x +
+				(cloud2Speed * dt.asSeconds()),
+				cloudSprite2.getPosition().y);
+
+			if (cloudSprite2.getPosition().x > 1920)
+			{
+				cloud2Active = false;
+			}
+		}
+
+		// cloud 3
+		if (!cloud3Active)
+		{
+			std::srand((int)time(0) * 30);
+			cloud3Speed = (float)(std::rand() % 200);
+
+			std::srand((int)time(0) * 30);
+			float height{ (std::rand() % 450) - 150.0f };
+			cloudSprite3.setPosition(-200, height);
+			cloud3Active = true;
+		}
+		else
+		{
+			cloudSprite3.setPosition(
+				cloudSprite3.getPosition().x +
+				(cloud3Speed * dt.asSeconds()),
+				cloudSprite3.getPosition().y);
+
+			if (cloudSprite3.getPosition().x > 1920)
+			{
+				cloud3Active = false;
 			}
 		}
 
