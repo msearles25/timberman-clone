@@ -1,3 +1,5 @@
+#include <stdlib.h> // srand & rand
+#include <time.h> // time
 #include <SFML/Graphics.hpp>
 
 int main()
@@ -31,6 +33,7 @@ int main()
 	beeTexture.loadFromFile("graphics/bee.png");
 	sf::Sprite beeSprite;
 	beeSprite.setTexture(beeTexture);
+	beeSprite.setPosition(0, 800);
 
 	// it the bee currently moving?
 	bool beeActive{ false };
@@ -62,6 +65,8 @@ int main()
 	float cloud2Speed{ 0.0f };
 	float cloud3Speed{ 0.0f };
 
+	sf::Clock clock;
+
 	while (window.isOpen())
 	{
 		// handle the players input
@@ -70,6 +75,36 @@ int main()
 			window.close();
 		}
 		// update the scene
+
+		sf::Time dt{ clock.restart() };
+
+		// Setting up the bee
+		if (!beeActive)
+		{
+			// How fast the bee will be
+			std::srand((int)time(0)); // seeding the random number generator with current time
+			beeSpeed = (std::rand() % 200) + 200.0f;
+
+			// How high the bee is
+			std::srand((int)time(0) * 10);
+			float height{ (std::rand() % 500) + 500.0f };
+			beeSprite.setPosition(2000, height);
+			
+			beeActive = true;
+		}
+		else // move the bee
+		{
+			beeSprite.setPosition(beeSprite.getPosition().x - 
+				(beeSpeed * dt.asSeconds()), 
+				beeSprite.getPosition().y);
+
+			// has the bee reached the left-hand edge of the screen?
+			if (beeSprite.getPosition().x < -100)
+			{
+				// Set it up as a new bee next frame
+				beeActive = false;
+			}
+		}
 
 		// clear everything from the last frame
 		window.clear();
