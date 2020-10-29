@@ -274,6 +274,9 @@ int main()
 				logActive = true;
 
 				acceptInput = false;
+
+				// Play the chopping sound
+				chop.play();
 			}
 
 			// Handle pressing the left key
@@ -296,6 +299,8 @@ int main()
 				logActive = true;
 
 				acceptInput = false;
+
+				chop.play();
 			}
 		}
 
@@ -326,6 +331,9 @@ int main()
 					textRect.height / 2.0f);
 
 				messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+				// Play the out of time sound
+				outOfTime.play();
 			}
 
 			// Manage the bee
@@ -506,6 +514,9 @@ int main()
 					textRect.top + textRect.height / 2.0f);
 
 				messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+				// Play the death sound
+				death.play();
 			}
 		}
 
