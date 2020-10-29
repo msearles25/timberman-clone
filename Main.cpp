@@ -340,7 +340,7 @@ int main()
 			// update the branch sprites
 			for (int i{ 0 }; i < NUM_BRANCHES; i++)
 			{
-				float height{ i * 150 };
+				float height{ (float)(i * 150) };
 
 				if (branchPositions[i] == side::LEFT)
 				{
@@ -381,6 +381,18 @@ int main()
 
 		// Draw the tree
 		window.draw(treeSprite);
+
+		// Draw the player
+		window.draw(playerSprite);
+
+		// Draw the axe
+		window.draw(axeSprite);
+
+		// Draw the flying log
+		window.draw(logSprite);
+
+		// Draw the gravestone
+		window.draw(graveSprite);
 
 		// Draw the bee
 		window.draw(beeSprite);
