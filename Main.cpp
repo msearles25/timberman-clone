@@ -16,9 +16,31 @@ int main()
 	sf::Sprite backgroundSprite;
 	// Attach the texture to the sprite
 	backgroundSprite.setTexture(backgroundTexture);
-
 	// Set the background to cover the screen
 	backgroundSprite.setPosition(0, 0);
+
+	// Tree sprite
+	sf::Texture treeTexture;
+	treeTexture.loadFromFile("graphics/tree.png");
+	sf::Sprite treeSprite;
+	treeSprite.setTexture(treeTexture);
+	treeSprite.setPosition(810, 0);
+
+	// Bee sprite
+	sf::Texture beeTexture;
+	beeTexture.loadFromFile("graphics/bee.png");
+	sf::Sprite beeSprite;
+	beeSprite.setTexture(beeTexture);
+
+	// it the bee currently moving?
+	bool beeActive{ false };
+	// speed of the bee
+	float beeSpeed{ 0.0f };
+
+	// Cloud Sprites
+	sf::Texture cloudTexture;
+	cloudTexture.loadFromFile("graphics/cloud.png");
+
 
 	while (window.isOpen())
 	{
